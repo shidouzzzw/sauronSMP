@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SauronSMP - Türkiye'nin En İyi Survival SMP Deneyimi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+                linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #1a1a1a 75%),
+                linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        /* Minecraft-style blocks */
+        .minecraft-block {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #8B4513 50%, #A0522D 75%, #8B4513 100%);
+            border: 2px solid #654321;
+            box-shadow: 
+                inset -2px -2px 4px rgba(0,0,0,0.5),
+                inset 2px 2px 4px rgba(255,255,255,0.1),
+                0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .grass-block {
+            background: linear-gradient(to bottom, #7CB342 0%, #7CB342 30%, #8B4513 30%, #8B4513 100%);
+            border: 2px solid #558B2F;
+            box-shadow: 
+                inset -2px -2px 4px rgba(0,0,0,0.5),
+                inset 2px 2px 4px rgba(255,255,255,0.1),
+                0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .diamond-block {
+            background: linear-gradient(45deg, #B9F2FF 0%, #00D4FF 50%, #B9F2FF 100%);
+            border: 2px solid #0099CC;
+            box-shadow: 
+                inset -2px -2px 4px rgba(0,0,0,0.3),
+                inset 2px 2px 4px rgba(255,255,255,0.5),
+                0 0 20px rgba(0,212,255,0.5);
+        }
+
+        /* Floating Particles Background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ff0000;
+            text-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.8),
+                2px 2px 0 #8B0000,
+                4px 4px 0 #8B0000;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '⛏️';
+            position: absolute;
+            left: -30px;
+            font-size: 1.5rem;
+            animation: swing 2s ease-in-out infinite;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background: #ff0000;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        /* Sliding Menu */
+        .sliding-menu {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            border-left: 2px solid rgba(255, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .sliding-menu.active {
+            right: 0;
+        }
+
+        /* Menu Items */
+        .menu-items {
+            padding: 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 0, 0, 0.2);
+            transform: translateX(-5px);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            color: #ff0000;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255, 0, 0, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 8vw, 5rem);
+            font-weight: 900;
+            color: #ff0000;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+            to { text-shadow: 0 0 40px rgba(255, 0, 0, 1), 0 0 60px rgba(255, 0, 0, 0.6); }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #ccc;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            color: white;
+            box-shadow: 
+                0 4px 20px rgba(255, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 2px solid #8B0000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 30px rgba(255, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 69, 19, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        /* Server Status */
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.5), transparent);
+            margin: 4rem 0;
+        }
+
+        /* Glassmorphism Cards with Minecraft theme */
+        .glass-card {
+            background: rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            border: 2px solid rgba(139, 69, 19, 0.3);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8B4513, #A0522D, #8B4513);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            background: rgba(139, 69, 19, 0.15);
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Commands Grid */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .command-card {
+            background: rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            padding: 1.5rem;
+            border: 2px solid rgba(139, 69, 19, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-card::before {
+            content: '⛏️';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0.3;
+            font-size: 1.5rem;
+        }
+
+        .command-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .command-card:hover {
+            background: rgba(139, 69, 19, 0.2);
+            transform: translateY(-3px);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .command-code {
+            font-family: 'Orbitron', monospace;
+            color: #ff0000;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            text-align: center;
+            background: rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            padding: 2rem;
+            border: 2px solid rgba(139, 69, 19, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff0000, #cc0000, #ff0000);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            background: rgba(139, 69, 19, 0.15);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .team-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .rank-founder {
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            color: white;
+        }
+
+        .rank-admin {
+            background: linear-gradient(45deg, #ff6600, #cc5500);
+            color: white;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            background: rgba(139, 69, 19, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            padding: 2rem;
+            border: 2px solid rgba(139, 69, 19, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff0000, #cc0000, #ff0000);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(139, 69, 19, 0.15);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #ff0000;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #ff0000;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            background: rgba(255, 0, 0, 0.2);
+            border-bottom: 2px solid #ff0000;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff0000;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            color: white;
+            z-index: 4000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: #00ff00;
+            background: rgba(0, 100, 0, 0.9);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ff0000;
+            margin-bottom: 1rem;
+        }
+
+        .footer-ips {
+            margin-bottom: 1rem;
+            color: #ccc;
+        }
+
+        /* Chat Section */
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .chat-send {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Profile Stats */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff0000;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sliding-menu {
+                width: 100%;
+                right: -100%;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .commands-grid,
+            .team-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in-up.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">SAURONSMP</div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Sliding Menu -->
+    <div class="sliding-menu" id="slidingMenu">
+        <div class="menu-header">
+            <h3 style="color: #ff0000; font-family: 'Orbitron', monospace; margin-bottom: 1.5rem;">MENÜ</h3>
+        </div>
+        
+        <div class="menu-items">
+            <a href="#" class="menu-item" data-section="application">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvuru Yap</span>
+            </a>
+            <a href="#" class="menu-item" data-section="minigames">
+                <i class="fas fa-gamepad"></i>
+                <span>Mini Oyunlar</span>
+            </a>
+            <a href="#" class="menu-item" data-section="youtube">
+                <i class="fab fa-youtube"></i>
+                <span>YouTube</span>
+            </a>
+            <a href="#" class="menu-item" data-section="instagram">
+                <i class="fab fa-instagram"></i>
+                <span>Instagram</span>
+            </a>
+            <a href="#" class="menu-item" data-section="tiktok">
+                <i class="fab fa-tiktok"></i>
+                <span>TikTok</span>
+            </a>
+            <a href="#" class="menu-item" data-section="admin" id="adminMenuItem" style="display: none;">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin Panel</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="server-status">
+            <div class="status-dot"></div>
+            <span>Sunucu Aktif</span>
+        </div>
+        
+        <h1>SAURONSMP</h1>
+        <p>Türkiye'nin En İyi Survival SMP Deneyimi</p>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" id="copyJavaIP">
+                <i class="fas fa-copy"></i>
+                Java IP Kopyala
+            </button>
+            <a href="minecraft://connect?serverIp=45.8.196.30&serverPort=25037" class="btn btn-primary">
+                <i class="fas fa-gamepad"></i>
+                Bedrock ile Katıl
+            </a>
+            <button class="btn btn-secondary" id="discordBtn">
+                <i class="fab fa-discord"></i>
+                Discord
+            </button>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <div class="minecraft-block" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fab fa-java"></i>
+                <span>Java</span>
+            </div>
+            <div class="grass-block" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Bedrock</span>
+            </div>
+            <div class="diamond-block" style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-gem"></i>
+                <span>Premium</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Commands Section -->
+    <section class="container">
+        <h2 style="text-align: center; font-family: 'Orbitron', monospace; font-size: 2.5rem; color: #ff0000; margin-bottom: 1rem;">
+            Sunucu Komutları
+        </h2>
+        <p style="text-align: center; color: #ccc; margin-bottom: 2rem;">
+            Sunucuda kullanabileceğiniz temel komutlar
+        </p>
+        
+        <div class="commands-grid" id="commandsGrid">
+            <!-- Commands will be added via JavaScript -->
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Team Section -->
+    <section class="container">
+        <h2 style="text-align: center; font-family: 'Orbitron', monospace; font-size: 2.5rem; color: #ff0000; margin-bottom: 1rem;">
+            Yönetim Ekibi
+        </h2>
+        <p style="text-align: center; color: #ccc; margin-bottom: 2rem;">
+            Sunucuyu yöneten yetkili ekip
+        </p>
+        
+        <div class="team-grid" id="teamGrid">
+            <!-- Team members will be added via JavaScript -->
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Features Section -->
+    <section class="container">
+        <h2 style="text-align: center; font-family: 'Orbitron', monospace; font-size: 2.5rem; color: #ff0000; margin-bottom: 1rem;">
+            Sunucu Özellikleri
+        </h2>
+        <p style="text-align: center; color: #ccc; margin-bottom: 2rem;">
+            SauronSMP'in sunduğu özel özellikler
+        </p>
+        
+        <div class="features-grid" id="featuresGrid">
+            <!-- Features will be added via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">SAURONSMP</div>
+        <div class="footer-ips">
+            <p>Java IP: 45.8.196.30:25037</p>
+            <p>Bedrock IP: 45.8.196.30 Port: 25037</p>
+        </div>
+        <p style="color: #666; margin-top: 1rem;">
+            © 2024 SauronSMP. Tüm hakları saklıdır.
+        </p>
+    </footer>
+
+
+    <!-- Login/Register Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                Giriç Yap
+            </h2>
+            
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="username">Kullanici Adi</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Sifre</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Giriç Yap
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Modal -->
+    <div class="modal" id="applicationModal">
+        <div class="modal-content">
+            <button class="modal-close" id="applicationModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                Basvuru Formu
+            </h2>
+            
+            <form id="applicationForm">
+                <div class="form-group">
+                    <label for="appUsername">Oyuncu Adi</label>
+                    <input type="text" id="appUsername" name="appUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="appExperience">Tecrube Seviyesi</label>
+                    <select id="appExperience" name="appExperience" required style="width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 10px; color: white; font-family: 'Rajdhani', sans-serif;">
+                        <option value="">Secin...</option>
+                        <option value="beginner">Yeni Baslayan</option>
+                        <option value="intermediate">Orta Seviye</option>
+                        <option value="advanced">Ileri Seviye</option>
+                        <option value="expert">Uzman</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appAge">Yas</label>
+                    <input type="number" id="appAge" name="appAge" min="13" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="appReason">Neden Basvuruyorsunuz?</label>
+                    <textarea id="appReason" name="appReason" rows="4" required style="width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 10px; color: white; font-family: 'Rajdhani', sans-serif; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Basvuruyu Gonder
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <button class="modal-close" id="adminModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                Admin Panel
+            </h2>
+            
+            <div id="adminContent">
+                <h3 style="color: #ff0000; margin-bottom: 1rem;">Basvurular</h3>
+                <div id="applicationsList" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Applications will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini Games Modal -->
+    <div class="modal" id="minigamesModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close" id="minigamesModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                Mini Oyunlar
+            </h2>
+            
+            <div class="minigames-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="minigame-card" data-game="memory">
+                    <div style="text-align: center; padding: 2rem; background: rgba(139, 69, 19, 0.1); border: 2px solid rgba(139, 69, 19, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-brain" style="font-size: 2rem; color: #ff0000; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #ff0000; margin-bottom: 0.5rem;">Hafiza Oyunu</h3>
+                        <p style="color: #ccc; font-size: 0.9rem;">Kartlari eslestir</p>
+                    </div>
+                </div>
+                <div class="minigame-card" data-game="quiz">
+                    <div style="text-align: center; padding: 2rem; background: rgba(139, 69, 19, 0.1); border: 2px solid rgba(139, 69, 19, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-question-circle" style="font-size: 2rem; color: #ff0000; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #ff0000; margin-bottom: 0.5rem;">Minecraft Quiz</h3>
+                        <p style="color: #ccc; font-size: 0.9rem;">Bilgi testi</p>
+                    </div>
+                </div>
+                <div class="minigame-card" data-game="clicker">
+                    <div style="text-align: center; padding: 2rem; background: rgba(139, 69, 19, 0.1); border: 2px solid rgba(139, 69, 19, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-mouse-pointer" style="font-size: 2rem; color: #ff0000; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #ff0000; margin-bottom: 0.5rem;">Tikla Oyunu</h3>
+                        <p style="color: #ccc; font-size: 0.9rem;">Hiz testi</p>
+                    </div>
+                </div>
+                <div class="minigame-card" data-game="puzzle">
+                    <div style="text-align: center; padding: 2rem; background: rgba(139, 69, 19, 0.1); border: 2px solid rgba(139, 69, 19, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-puzzle-piece" style="font-size: 2rem; color: #ff0000; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #ff0000; margin-bottom: 0.5rem;">Bulmaca</h3>
+                        <p style="color: #ccc; font-size: 0.9rem;">Yerlestirme oyunu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Particles Animation
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 0, 0, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const slidingMenu = document.getElementById('slidingMenu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            slidingMenu.classList.toggle('active');
+        });
+
+        // Authentication System
+        const authModal = document.getElementById('authModal');
+        const modalClose = document.getElementById('modalClose');
+        const authForm = document.getElementById('authForm');
+        const adminMenuItem = document.getElementById('adminMenuItem');
+        
+        // Show login modal on page load
+        window.addEventListener('load', () => {
+            authModal.classList.add('active');
+        });
+        
+        modalClose.addEventListener('click', () => {
+            authModal.classList.remove('active');
+        });
+        
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.classList.remove('active');
+            }
+        });
+        
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check admin credentials
+            if (username === 'erkanzurna' && password === 'admin') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('isAdmin', 'true');
+                localStorage.setItem('username', username);
+                
+                showToast('Admin olarak giris yapildi!', 'success');
+                authModal.classList.remove('active');
+                adminMenuItem.style.display = 'block';
+                authForm.reset();
+            } else if (username && password) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('isAdmin', 'false');
+                localStorage.setItem('username', username);
+                
+                showToast('Giris basarili!', 'success');
+                authModal.classList.remove('active');
+                authForm.reset();
+            } else {
+                showToast('Kullanici adi veya sifre hatali!', 'error');
+            }
+        });
+        
+        // Check if user is logged in
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const isAdmin = localStorage.getItem('isAdmin');
+            
+            if (isLoggedIn === 'true') {
+                authModal.classList.remove('active');
+                if (isAdmin === 'true') {
+                    adminMenuItem.style.display = 'block';
+                }
+            }
+        }
+        
+        // Application System
+        const applicationModal = document.getElementById('applicationModal');
+        const applicationModalClose = document.getElementById('applicationModalClose');
+        const applicationForm = document.getElementById('applicationForm');
+        
+        applicationModalClose.addEventListener('click', () => {
+            applicationModal.classList.remove('active');
+        });
+        
+        applicationModal.addEventListener('click', (e) => {
+            if (e.target === applicationModal) {
+                applicationModal.classList.remove('active');
+            }
+        });
+        
+        applicationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = {
+                username: document.getElementById('appUsername').value,
+                experience: document.getElementById('appExperience').value,
+                age: document.getElementById('appAge').value,
+                reason: document.getElementById('appReason').value,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            // Save application to localStorage
+            let applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            applications.push(formData);
+            localStorage.setItem('applications', JSON.stringify(applications));
+            
+            showToast('Basvurunuz basariyla gonderildi!', 'success');
+            applicationModal.classList.remove('active');
+            applicationForm.reset();
+        });
+        
+        // Admin Panel
+        const adminModal = document.getElementById('adminModal');
+        const adminModalClose = document.getElementById('adminModalClose');
+        
+        adminModalClose.addEventListener('click', () => {
+            adminModal.classList.remove('active');
+        });
+        
+        adminModal.addEventListener('click', (e) => {
+            if (e.target === adminModal) {
+                adminModal.classList.remove('active');
+            }
+        });
+        
+        function loadApplications() {
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            const applicationsList = document.getElementById('applicationsList');
+            
+            if (applications.length === 0) {
+                applicationsList.innerHTML = '<p style="color: #ccc; text-align: center;">Henüz basvuru yok.</p>';
+                return;
+            }
+            
+            applicationsList.innerHTML = applications.map((app, index) => `
+                <div style="background: rgba(139, 69, 19, 0.1); border: 2px solid rgba(139, 69, 19, 0.3); padding: 1.5rem; margin-bottom: 1rem; border-radius: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: #ff0000; margin-bottom: 0.5rem;">${app.username}</h4>
+                            <p style="color: #ccc; font-size: 0.9rem;">Tecrube: ${app.experience} | Yas: ${app.age}</p>
+                        </div>
+                        <span style="padding: 0.3rem 0.8rem; background: ${app.status === 'pending' ? 'rgba(255, 165, 0, 0.2)' : app.status === 'approved' ? 'rgba(0, 255, 0, 0.2)' : 'rgba(255, 0, 0, 0.2)'}; border: 1px solid ${app.status === 'pending' ? '#ffa500' : app.status === 'approved' ? '#00ff00' : '#ff0000'}; color: ${app.status === 'pending' ? '#ffa500' : app.status === 'approved' ? '#00ff00' : '#ff0000'}; font-size: 0.8rem; text-transform: uppercase;">
+                            ${app.status}
+                        </span>
+                    </div>
+                    <p style="color: #ccc; margin-bottom: 1rem;">${app.reason}</p>
+                    ${app.status === 'pending' ? `
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="updateApplicationStatus(${index}, 'approved')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Kabul Et</button>
+                            <button class="btn btn-secondary" onclick="updateApplicationStatus(${index}, 'rejected')" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Reddet</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function updateApplicationStatus(index, status) {
+            let applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            applications[index].status = status;
+            localStorage.setItem('applications', JSON.stringify(applications));
+            loadApplications();
+            showToast(`Basvuru ${status === 'approved' ? 'kabul edildi' : 'reddedildi'}!`, 'success');
+        }
+        
+        // Mini Games
+        const minigamesModal = document.getElementById('minigamesModal');
+        const minigamesModalClose = document.getElementById('minigamesModalClose');
+        
+        minigamesModalClose.addEventListener('click', () => {
+            minigamesModal.classList.remove('active');
+        });
+        
+        minigamesModal.addEventListener('click', (e) => {
+            if (e.target === minigamesModal) {
+                minigamesModal.classList.remove('active');
+            }
+        });
+        
+        // Menu Items Functionality
+        const menuItems = document.querySelectorAll('.menu-item');
+        
+        menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = item.dataset.section;
+                handleMenuClick(section);
+            });
+        });
+        
+        function handleMenuClick(section) {
+            switch(section) {
+                case 'application':
+                    applicationModal.classList.add('active');
+                    break;
+                case 'minigames':
+                    minigamesModal.classList.add('active');
+                    break;
+                case 'youtube':
+                    window.open('https://youtube.com', '_blank');
+                    showToast('YouTube aciliyor...', 'info');
+                    break;
+                case 'instagram':
+                    window.open('https://instagram.com', '_blank');
+                    showToast('Instagram aciliyor...', 'info');
+                    break;
+                case 'tiktok':
+                    window.open('https://tiktok.com', '_blank');
+                    showToast('TikTok aciliyor...', 'info');
+                    break;
+                case 'admin':
+                    loadApplications();
+                    adminModal.classList.add('active');
+                    break;
+                default:
+                    showToast('Özellik yakında!', 'info');
+            }
+        }
+
+        // Copy Java IP
+        const copyJavaIP = document.getElementById('copyJavaIP');
+        const javaIP = '45.8.196.30:25037';
+        
+        copyJavaIP.addEventListener('click', () => {
+            navigator.clipboard.writeText(javaIP).then(() => {
+                showToast('Java IP kopyalandı!', 'success');
+            });
+        });
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+
+
+        // Commands Data
+        const commands = [
+            { code: '/home', description: 'Eve ışınlan' },
+            { code: '/sethome', description: 'Ev olarak kaydet' },
+            { code: '/delhome', description: 'Evi sil' },
+            { code: '/spawn', description: 'Spawna dön' },
+            { code: '/tpa [oyuncu]', description: 'Işınlanma isteği gönder' },
+            { code: '/tpaccept', description: 'İsteği kabul et' },
+            { code: '/tpdeny', description: 'İsteği reddet' },
+            { code: '/balance', description: 'Bakiyeni gör' },
+            { code: '/pay [oyuncu] [miktar]', description: 'Para gönder' },
+            { code: '/shop', description: 'Marketi aç' },
+            { code: '/afk', description: 'AFK moduna geç' },
+            { code: '/msg [oyuncu]', description: 'Özel mesaj gönder' },
+            { code: '/reply', description: 'Son mesajı yanıtla' },
+            { code: '/ignore [oyuncu]', description: 'Oyuncuyu yoksay' },
+            { code: '/list', description: 'Online oyuncuları gör' },
+            { code: '/rules', description: 'Kuralları gör' },
+            { code: '/motd', description: 'Gün mesajını gör' },
+            { code: '/warp', description: 'Warp noktalarını gör' },
+            { code: '/rtp', description: 'Rastgele ışınlan' },
+            { code: '/balancetop', description: 'En zenginler listesi' }
+        ];
+
+        // Team Data
+        const teamMembers = [
+            { name: 'KING1OMER', role: 'Kurucu', rank: 'founder' },
+            { name: 'Windowserk', role: 'Admin', rank: 'admin' },
+            { name: 'ArasTURKO', role: 'Admin', rank: 'admin' }
+        ];
+
+        // Features Data
+        const features = [
+            { icon: 'fa-gamepad', title: 'Java & Bedrock Desteği', description: 'Her platformdan erişim imkanı' },
+            { icon: 'fa-coins', title: 'Ekonomi Sistemi', description: 'Gelişmiş ekonomik yapı' },
+            { icon: 'fa-gavel', title: 'Açık Artırma Sistemi', description: 'Eşya ticareti platformu' },
+            { icon: 'fa-clock', title: 'AFK Sistemi', description: 'Oyuncu takibi ve ödüller' },
+            { icon: 'fa-store', title: 'Özel Shop', description: 'Sunucuya özel market sistemi' },
+            { icon: 'fa-shield-alt', title: 'Güvenlik Sistemi', description: 'Gelişmiş koruma mekanizmaları' }
+        ];
+
+        // Populate Commands Grid
+        function populateCommands() {
+            const commandsGrid = document.getElementById('commandsGrid');
+            commands.forEach((command, index) => {
+                const card = document.createElement('div');
+                card.className = 'command-card fade-in-up';
+                card.innerHTML = `
+                    <div class="command-code">${command.code}</div>
+                    <div style="color: #ccc;">${command.description}</div>
+                `;
+                commandsGrid.appendChild(card);
+                
+                // Animate with delay
+                setTimeout(() => {
+                    card.classList.add('animate');
+                }, index * 50);
+            });
+        }
+
+        // Populate Team Grid
+        function populateTeam() {
+            const teamGrid = document.getElementById('teamGrid');
+            teamMembers.forEach((member, index) => {
+                const card = document.createElement('div');
+                card.className = 'team-card fade-in-up';
+                card.innerHTML = `
+                    <img src="https://mc-heads.net/avatar/${member.name}/100" alt="${member.name}" class="team-avatar">
+                    <div class="team-name">${member.name}</div>
+                    <div class="team-role">${member.role}</div>
+                    <span class="rank-badge rank-${member.rank}">
+                        ${member.rank === 'founder' ? 'Kurucu' : 'Admin'}
+                    </span>
+                `;
+                teamGrid.appendChild(card);
+                
+                // Animate with delay
+                setTimeout(() => {
+                    card.classList.add('animate');
+                }, index * 100);
+            });
+        }
+
+        // Populate Features Grid
+        function populateFeatures() {
+            const featuresGrid = document.getElementById('featuresGrid');
+            features.forEach((feature, index) => {
+                const card = document.createElement('div');
+                card.className = 'feature-card fade-in-up';
+                card.innerHTML = `
+                    <div class="feature-icon">
+                        <i class="fas ${feature.icon}"></i>
+                    </div>
+                    <h3 style="font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 1rem;">
+                        ${feature.title}
+                    </h3>
+                    <p style="color: #ccc;">${feature.description}</p>
+                `;
+                featuresGrid.appendChild(card);
+                
+                // Animate with delay
+                setTimeout(() => {
+                    card.classList.add('animate');
+                }, index * 100);
+            });
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+
+        // Discord Button
+        document.getElementById('discordBtn').addEventListener('click', () => {
+            showToast('Discord sunucusu yakında açılacak!', 'info');
+        });
+
+        // Mini Games Functionality
+        const minigameCards = document.querySelectorAll('.minigame-card');
+        
+        minigameCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const game = card.dataset.game;
+                startMinigame(game);
+            });
+        });
+        
+        function startMinigame(game) {
+            switch(game) {
+                case 'memory':
+                    startMemoryGame();
+                    break;
+                case 'quiz':
+                    startQuizGame();
+                    break;
+                case 'clicker':
+                    startClickerGame();
+                    break;
+                case 'puzzle':
+                    showToast('Bulmaca oyunu yakinda!', 'info');
+                    break;
+                default:
+                    showToast('Oyun yakinda!', 'info');
+            }
+        }
+        
+        function startMemoryGame() {
+            showToast('Hafiza oyunu baslatiliyor...', 'info');
+            // Simple memory game implementation
+            const symbols = ['\u26c4', '\u26c5', '\u2600\ufe0f', '\u26c1', '\u26a1', '\ud83c\udf1f', '\ud83c\udf19', '\ud83c\udf08'];
+            const cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            
+            let flippedCards = [];
+            let matchedPairs = 0;
+            
+            // Create game board (simplified version)
+            minigamesModal.innerHTML = `
+                <button class="modal-close" onclick="location.reload()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                    Hafiza Oyunu
+                </h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; max-width: 400px; margin: 0 auto;">
+                    ${cards.map((symbol, index) => `
+                        <div class="memory-card" data-index="${index}" data-symbol="${symbol}" style="aspect-ratio: 1; background: rgba(139, 69, 19, 0.3); border: 2px solid rgba(139, 69, 19, 0.5); display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; transition: all 0.3s ease;">
+                            ?
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p style="color: #ccc;">Eslestirmeler: <span id="matchedCount">0</span>/8</p>
+                </div>
+            `;
+            
+            // Add card click handlers
+            setTimeout(() => {
+                document.querySelectorAll('.memory-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+                            this.textContent = this.dataset.symbol;
+                            this.classList.add('flipped');
+                            flippedCards.push(this);
+                            
+                            if (flippedCards.length === 2) {
+                                setTimeout(() => {
+                                    if (flippedCards[0].dataset.symbol === flippedCards[1].dataset.symbol) {
+                                        flippedCards[0].style.background = 'rgba(0, 255, 0, 0.3)';
+                                        flippedCards[1].style.background = 'rgba(0, 255, 0, 0.3)';
+                                        matchedPairs++;
+                                        document.getElementById('matchedCount').textContent = matchedPairs;
+                                        
+                                        if (matchedPairs === 8) {
+                                            showToast('Tebrikler! Oyunu kazandiniz!', 'success');
+                                        }
+                                    } else {
+                                        flippedCards[0].textContent = '?';
+                                        flippedCards[1].textContent = '?';
+                                        flippedCards[0].classList.remove('flipped');
+                                        flippedCards[1].classList.remove('flipped');
+                                    }
+                                    flippedCards = [];
+                                }, 1000);
+                            }
+                        }
+                    });
+                });
+            }, 100);
+        }
+        
+        function startQuizGame() {
+            const questions = [
+                { question: "Minecraft'ta elmas hangi seviyede bulunur?", answers: ["Seviye 1-15", "Seviye 16-30", "Seviye 31-50", "Seviye 51-64"], correct: 0 },
+                { question: "Hangi mob gece ortaya çikar?", answers: ["Inek", "Koyun", "Zombi", "Domuz"], correct: 2 },
+                { question: "Minecraft'ta kaç tane boyut vardir?", answers: ["2", "3", "4", "5"], correct: 1 },
+                { question: "Ender Dragon hangi boyutta bulunur?", answers: ["Nether", "Overworld", "End", "Aether"], correct: 2 }
+            ];
+            
+            let currentQuestion = 0;
+            let score = 0;
+            
+            function showQuestion() {
+                const q = questions[currentQuestion];
+                minigamesModal.innerHTML = `
+                    <button class="modal-close" onclick="location.reload()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                        Minecraft Quiz
+                    </h2>
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <p style="color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">${q.question}</p>
+                        <p style="color: #ccc;">Soru ${currentQuestion + 1}/${questions.length}</p>
+                    </div>
+                    <div style="display: grid; gap: 1rem; max-width: 400px; margin: 0 auto;">
+                        ${q.answers.map((answer, index) => `
+                            <button class="btn btn-secondary quiz-answer" data-index="${index}" style="text-align: left; padding: 1rem;">
+                                ${answer}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <p style="color: #ff0000;">Skor: <span id="quizScore">${score}</span></p>
+                    </div>
+                `;
+                
+                document.querySelectorAll('.quiz-answer').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const answerIndex = parseInt(this.dataset.index);
+                        if (answerIndex === q.correct) {
+                            score++;
+                            showToast('Dogru cevap!', 'success');
+                        } else {
+                            showToast('Yanlis cevap!', 'error');
+                        }
+                        
+                        currentQuestion++;
+                        if (currentQuestion < questions.length) {
+                            showQuestion();
+                        } else {
+                            minigamesModal.innerHTML = `
+                                <button class="modal-close" onclick="location.reload()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                                    Quiz Bitti!
+                                </h2>
+                                <div style="text-align: center;">
+                                    <p style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Son Skor: ${score}/${questions.length}</p>
+                                    <p style="color: #ccc;">${score >= questions.length * 0.7 ? 'Harika is!' : 'Daha iyi olabilirsin!'}</p>
+                                </div>
+                            `;
+                        }
+                    });
+                });
+            }
+            
+            showQuestion();
+        }
+        
+        function startClickerGame() {
+            let clicks = 0;
+            let timeLeft = 10;
+            let gameActive = true;
+            
+            minigamesModal.innerHTML = `
+                <button class="modal-close" onclick="location.reload()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                    Tikla Oyunu
+                </h2>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <p style="color: #fff; font-size: 1.5rem;">Süre: <span id="timeLeft">${timeLeft}</span></p>
+                    <p style="color: #ff0000; font-size: 2rem;">Tiklamalar: <span id="clickCount">${clicks}</span></p>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" id="clickButton" style="padding: 2rem 4rem; font-size: 1.5rem;">
+                        TIKLA!
+                    </button>
+                </div>
+            `;
+            
+            const clickButton = document.getElementById('clickButton');
+            const timeDisplay = document.getElementById('timeLeft');
+            const clickDisplay = document.getElementById('clickCount');
+            
+            clickButton.addEventListener('click', () => {
+                if (gameActive) {
+                    clicks++;
+                    clickDisplay.textContent = clicks;
+                    clickButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        clickButton.style.transform = 'scale(1)';
+                    }, 100);
+                }
+            });
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    gameActive = false;
+                    clearInterval(timer);
+                    clickButton.disabled = true;
+                    clickButton.textContent = 'Oyun Bitti!';
+                    
+                    setTimeout(() => {
+                        minigamesModal.innerHTML = `
+                            <button class="modal-close" onclick="location.reload()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <h2 style="text-align: center; font-family: 'Orbitron', monospace; color: #ff0000; margin-bottom: 2rem;">
+                                Oyun Bitti!
+                            </h2>
+                            <div style="text-align: center;">
+                                <p style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Toplam Tiklama: ${clicks}</p>
+                                <p style="color: #ccc;">${clicks >= 50 ? 'Harika hiz!' : clicks >= 30 ? 'Iyi is!' : 'Daha hizli olabilirsin!'}</p>
+                            </div>
+                        `;
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            populateCommands();
+            populateTeam();
+            populateFeatures();
+            
+            // Observe all fade-in-up elements
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
