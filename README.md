@@ -1,0 +1,2 @@
+# sauronSMP
+minecraft server
